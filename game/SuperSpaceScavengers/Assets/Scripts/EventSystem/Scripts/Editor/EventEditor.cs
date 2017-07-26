@@ -373,7 +373,7 @@ public class EventEditor : EditorWindow
 
         try
         {
-            StreamWriter _writer = new StreamWriter(Application.dataPath + @"\EventSystem\Scripts\Events.cs");
+            StreamWriter _writer = new StreamWriter(Application.dataPath + @"\Scripts\EventSystem\Scripts\Events.cs");
             Event[] _eventList = GetObjectList<Event>();
             InputEvent[] _inputEventList = GetObjectList<InputEvent>();
 
