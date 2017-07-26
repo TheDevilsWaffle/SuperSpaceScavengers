@@ -1,0 +1,2 @@
+<h1>game</h1>
+<p>This directory contains the <strong>Super Space Scavengers</strong> Unity project in its entirety. All files found in this directory are in the game. Do note that a replacement C# template script for new Unity scripts is also located in this directory, as well.</p>
