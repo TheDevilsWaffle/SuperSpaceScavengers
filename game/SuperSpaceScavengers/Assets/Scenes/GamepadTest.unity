@@ -14898,7 +14898,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 62f11cbb394bfc6439a4b6c4fef7df69, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9aca01201a523b0438a0f38daf635ba9, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -18544,23 +18544,119 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   y: {fileID: 1059029335}
+  y_icon: {fileID: 1743451650}
+  y_status: {fileID: 574227430}
+  y_value: {fileID: 535582695}
+  y_held: {fileID: 1043458725}
+  y_inactive: {fileID: 1754663124}
   b: {fileID: 1563400057}
+  b_icon: {fileID: 532098439}
+  b_status: {fileID: 1422665735}
+  b_value: {fileID: 1178900660}
+  b_held: {fileID: 430265645}
+  b_inactive: {fileID: 373336737}
   a: {fileID: 1496303775}
+  a_icon: {fileID: 1634910960}
+  a_status: {fileID: 69103690}
+  a_value: {fileID: 1703687603}
+  a_held: {fileID: 2069645756}
+  a_inactive: {fileID: 1466900831}
   x: {fileID: 1220428184}
+  x_icon: {fileID: 35913462}
+  x_status: {fileID: 1275005566}
+  x_value: {fileID: 139352494}
+  x_held: {fileID: 2015123133}
+  x_inactive: {fileID: 2060033100}
   select: {fileID: 597094354}
+  select_icon: {fileID: 1173224665}
+  select_status: {fileID: 1176530300}
+  select_value: {fileID: 651671005}
+  select_held: {fileID: 2013549354}
+  select_inactive: {fileID: 1423938389}
   start: {fileID: 1604880859}
+  start_icon: {fileID: 604447662}
+  start_status: {fileID: 919961929}
+  start_value: {fileID: 1648914307}
+  start_held: {fileID: 830858590}
+  start_inactive: {fileID: 380213106}
   lb: {fileID: 1858050524}
+  lb_icon: {fileID: 398870114}
+  lb_status: {fileID: 1298308913}
+  lb_value: {fileID: 361351446}
+  lb_held: {fileID: 803233172}
+  lb_inactive: {fileID: 2105357064}
   rb: {fileID: 1111567058}
+  rb_icon: {fileID: 53994328}
+  rb_status: {fileID: 1407239761}
+  rb_value: {fileID: 1100734507}
+  rb_held: {fileID: 1716431548}
+  rb_inactive: {fileID: 765843645}
   lt: {fileID: 1859735272}
+  lt_icon: {fileID: 1844175688}
+  lt_status: {fileID: 1019523803}
+  lt_value: {fileID: 1059835446}
+  lt_raw: {fileID: 1240571463}
+  lt_held: {fileID: 1404445785}
+  lt_inactive: {fileID: 493762616}
   rt: {fileID: 405347450}
+  rt_icon: {fileID: 1557007473}
+  rt_status: {fileID: 870898659}
+  rt_value: {fileID: 2069486927}
+  rt_raw: {fileID: 1571480048}
+  rt_held: {fileID: 116485656}
+  rt_inactive: {fileID: 834617218}
   up: {fileID: 564904133}
+  up_icon: {fileID: 118217706}
+  up_status: {fileID: 498174387}
+  up_value: {fileID: 1874421790}
+  up_held: {fileID: 288662188}
+  up_inactive: {fileID: 843469048}
   right: {fileID: 53622511}
+  right_icon: {fileID: 1935078296}
+  right_status: {fileID: 588112891}
+  right_value: {fileID: 251760475}
+  right_held: {fileID: 1979948999}
+  right_inactive: {fileID: 673309805}
   down: {fileID: 821350281}
+  down_icon: {fileID: 1332479828}
+  down_status: {fileID: 1822820664}
+  down_value: {fileID: 268220524}
+  down_held: {fileID: 954975563}
+  down_inactive: {fileID: 1091257494}
   left: {fileID: 661363057}
+  left_icon: {fileID: 890484100}
+  left_status: {fileID: 1469993552}
+  left_value: {fileID: 1191787939}
+  left_held: {fileID: 1335580251}
+  left_inactive: {fileID: 1772158392}
   l3: {fileID: 655341201}
+  l3_icon: {fileID: 53522946}
+  l3_status: {fileID: 420051503}
+  l3_value: {fileID: 1498161792}
+  l3_held: {fileID: 550576964}
+  l3_inactive: {fileID: 883173828}
   ls: {fileID: 580933817}
+  ls_icon: {fileID: 107026401}
+  ls_status: {fileID: 925031037}
+  ls_value: {fileID: 2103429700}
+  ls_held: {fileID: 95987808}
+  ls_inactive: {fileID: 857573634}
+  ls_angle: {fileID: 1270128272}
+  ls_aa: {fileID: 454645541}
   r3: {fileID: 1111009366}
+  r3_icon: {fileID: 1057314771}
+  r3_status: {fileID: 1561561947}
+  r3_value: {fileID: 1975823387}
+  r3_held: {fileID: 1976794016}
+  r3_inactive: {fileID: 1731774924}
   rs: {fileID: 383474368}
+  rs_icon: {fileID: 345358981}
+  rs_status: {fileID: 457276788}
+  rs_value: {fileID: 1468347887}
+  rs_held: {fileID: 2003454280}
+  rs_inactive: {fileID: 1985261343}
+  rs_angle: {fileID: 677533904}
+  rs_aa: {fileID: 1458160139}
   comboButtons:
   - {fileID: 959920132}
   - {fileID: 369049315}
@@ -18602,6 +18698,15 @@ MonoBehaviour:
   maxHeldDuration: 10
   maxInactiveDuration: 10
   maxButtonsRemembered: 10
+  up: -90
+  up_right: -45
+  right: 0
+  down_right: 45
+  down: 90
+  down_left: 135
+  left: -180
+  up_left: -135
+  axisLimit: 22.5
 --- !u!1 &1970217807
 GameObject:
   m_ObjectHideFlags: 0
