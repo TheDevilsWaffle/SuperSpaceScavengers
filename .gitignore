@@ -25,7 +25,6 @@ ExportedObj/
 *.unity binary
 *.prefab binary
 *.asset binary
-*.dwlt
 
 # Unity3D generated meta files
 *.pidb.meta
