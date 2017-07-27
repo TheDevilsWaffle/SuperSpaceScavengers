@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 public class Item : MonoBehaviour
 {
+    private new Rigidbody rigidbody = null;
+
     private bool detected = false;
     public Animate[] animateOnDetected = new Animate[0];
     public Animate[] animateOnLost = new Animate[0];
@@ -36,18 +39,36 @@ public class Item : MonoBehaviour
 
     public void OnPickedUp(Transform _transform)
     {
+        transform.position = _transform.position + Vector3.up * 100;
+        StartCoroutine(DelayedDisable());
+    }
+
+    private IEnumerator DelayedDisable()
+    {
+        yield return null;
+        yield return null;
+
         gameObject.SetActive(false);
     }
 
     public void OnDropped(Transform _transform)
     {
         gameObject.SetActive(true);
-        transform.position = _transform.position + Vector3.right;
+        rigidbody.velocity = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+
+        Player _player = _transform.GetComponent<Player>();
+
+        if (_player != null)
+            transform.position = _transform.position + Vector3.right * (_player.sprite.flipX ? -1.25f : 1.25f);
+        else
+            transform.position = _transform.position + Vector3.up * 1.5f;
     }
 
     // Use this for initialization
     void Start()
     {
+        rigidbody = GetComponent<Rigidbody>();
         OnDropped(transform);
     }
 
