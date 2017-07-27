@@ -49,6 +49,8 @@ public class PlayerMovement : Movement
                 targetDirection = new Vector3(_inputEventInfo.dualAxisValue.x, 0, _inputEventInfo.dualAxisValue.y);
             //else
             //    targetDirection = new Vector3(_inputEventInfo.dualAxisValue.x, -_inputEventInfo.dualAxisValue.y, 0);
+
+            player.sprite.flipX = targetDirection.x < 0;
         }
         else
         {

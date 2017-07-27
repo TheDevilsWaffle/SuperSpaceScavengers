@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : AffiliatedObject
 {
     public int index;
+    public SpriteRenderer sprite;
 
     // Use this for initialization
     void Start()
