@@ -15,6 +15,17 @@ public class InputSystem : MonoBehaviour
 
     public static Stopwatch stopWatch = new Stopwatch();
 
+    void OnValidate()
+    {
+        Transform _transform = transform;
+
+        //_transform.position = Vector3.zero;
+        //_transform.localScale = Vector3.zero;
+        //_transform.rotation = Quaternion.identity;
+
+        _transform.hideFlags = HideFlags.HideInInspector;
+    }
+
     // Use updates the gamepad input before anything happens
     InputSystem()
     {
