@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 3245b8aa6acd5b94ab37eb8f4e63ecdb
 folderAsset: yes
 timeCreated: 1501104808
+=======
+guid: 7162b763092f16f40b31f7dc35a57b75
+folderAsset: yes
+timeCreated: 1501102026
+>>>>>>> AustonPlayerController
 licenseType: Free
 DefaultImporter:
   userData: 

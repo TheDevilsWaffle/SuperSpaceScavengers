@@ -20,10 +20,13 @@ public abstract class Animate : MonoBehaviour
     public float duration = 1;
     public AnimationCurve curve = AnimationCurve.Linear(0, 0, 1, 1);
 
-    private float timer = 0;
+    [System.NonSerialized]
+    public float timer = 0;
     public bool animating { get; private set; }
-    public enum StopType { Stay, GoToStart, GoToEnd }
+    public enum StopType { Stay, GoToStart, GoToEnd, GoToDefault }
     public StopType onCompletion = StopType.GoToEnd;
+    [Range(0, 1)]
+    public float defaultStopRatio = 0;
 
     public bool useFixedUpdate = false;
     public bool usesUnscaledTime = false;
@@ -81,11 +84,13 @@ public abstract class Animate : MonoBehaviour
         animating = false;
         if (_stopType == StopType.Stay)
             return;
-
+        
         if (_stopType == StopType.GoToStart)
             timer = speed < 0 ? duration : 0;
-        else
+        else if (_stopType == StopType.GoToEnd)
             timer = speed > 0 ? duration : 0;
+        else
+            timer = duration * defaultStopRatio;
 
         SetValueFromRatio(timer / duration);
     }
@@ -108,7 +113,7 @@ public abstract class Animate : MonoBehaviour
 
                 return;
             }
-            
+
             SetValueFromRatio(_completionRatio);
         }
     }
@@ -122,6 +127,6 @@ public abstract class Animate : MonoBehaviour
     }
     protected virtual void SetValueFromRatio(float _ratio)
     {
-        
+
     }
 }
