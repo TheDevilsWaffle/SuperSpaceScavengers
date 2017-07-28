@@ -69,7 +69,7 @@ public class PlayerInventory : MonoBehaviour
     {
         Item _thrownItem = item1;
         DropItem1(false);
-        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * 5;
+        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * 10 + transform.up * 5f;
     }
 
     private void OnSwitchItem(InputEventInfo _inputEventInfo)
