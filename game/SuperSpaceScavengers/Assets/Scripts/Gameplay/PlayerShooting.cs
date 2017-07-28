@@ -46,7 +46,7 @@ public class PlayerShooting : Shooting
 
     void OnDestroy()
     {
-        //InputEvents.RightBasic.Unsubscribe(OnShoot);
+        InputEvents.UseItem.Unsubscribe(OnShoot);
         //InputEvents.LeftBasic.Unsubscribe(OnAim);
     }
 }

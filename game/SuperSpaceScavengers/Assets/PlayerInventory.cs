@@ -57,8 +57,19 @@ public class PlayerInventory : MonoBehaviour
         itemDetection.callOnEnter += OnDetectItem;
         itemDetection.callOnExit += OnLoseItem;
 
+        InputEvents.ThrowItem.Subscribe(OnThrowItem);
         InputEvents.PickUpDropItem.Subscribe(OnPickUpDropItem);
         InputEvents.SwitchItem.Subscribe(OnSwitchItem);
+
+        item1 = item1;
+        item2 = item2;
+    }
+
+    private void OnThrowItem(InputEventInfo _inputEventInfo)
+    {
+        Item _thrownItem = item1;
+        DropItem1(false);
+        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * 5;
     }
 
     private void OnSwitchItem(InputEventInfo _inputEventInfo)

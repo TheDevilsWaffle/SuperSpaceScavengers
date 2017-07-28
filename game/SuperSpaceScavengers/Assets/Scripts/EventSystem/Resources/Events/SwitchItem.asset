@@ -17,8 +17,8 @@ MonoBehaviour:
   - name: Keyboard
     controlSet: 0
     inputType_: 1
-    sendOnChannels: 00000000
-    expanded: 0
+    sendOnChannels: 01000000
+    expanded: 1
     parentEvent: {fileID: 11400000}
     keyCode: 114
     gamePadButton: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
     controlSet: 0
     inputType_: 3
     sendOnChannels: 01010101
-    expanded: 0
+    expanded: 1
     parentEvent: {fileID: 11400000}
     keyCode: 0
     gamePadButton: 11

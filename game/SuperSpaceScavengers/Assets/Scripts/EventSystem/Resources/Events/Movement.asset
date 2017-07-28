@@ -59,7 +59,7 @@ MonoBehaviour:
   - name: Keyboard Arrow
     controlSet: 0
     inputType_: 1
-    sendOnChannels: 00000000
+    sendOnChannels: 01000000
     expanded: 0
     parentEvent: {fileID: 11400000}
     horizontal:
@@ -140,7 +140,7 @@ MonoBehaviour:
     controlSet: 0
     inputType_: 3
     sendOnChannels: 01010101
-    expanded: 1
+    expanded: 0
     parentEvent: {fileID: 11400000}
     horizontal:
       name: 
