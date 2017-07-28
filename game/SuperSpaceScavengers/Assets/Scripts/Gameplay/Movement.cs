@@ -178,10 +178,11 @@ public class Movement : MonoBehaviour
         rigidbody.velocity = new Vector3(_newNonVertical.x, rigidbody.velocity.y, _newNonVertical.y);
 
         //rotation
-        //if (faceVelocity == false)
-        //    return;
+        if (faceVelocity == false)
+            return;
 
         //Vector3 _newForward = Vector3.Lerp(transform.forward, new Vector3(_newNonVertical.x, 0, _newNonVertical.y), Time.fixedDeltaTime * rotationSpeed);
-        //transform.LookAt(transform.position + _newForward);
+        Vector3 _newForward = Vector3.Lerp(transform.forward, targetDirection, Time.fixedDeltaTime * rotationSpeed);
+        transform.LookAt(transform.position + _newForward);
     }
 }

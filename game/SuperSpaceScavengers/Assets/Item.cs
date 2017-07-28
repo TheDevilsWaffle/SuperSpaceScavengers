@@ -51,25 +51,20 @@ public class Item : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void OnDropped(Transform _transform)
+    public void OnDropped(Transform _transform, float _distance, float _height)
     {
         gameObject.SetActive(true);
         rigidbody.velocity = Vector3.zero;
         transform.rotation = Quaternion.identity;
 
-        Player _player = _transform.GetComponent<Player>();
-
-        if (_player != null)
-            transform.position = _transform.position + Vector3.right * (_player.sprite.flipX ? -1.25f : 1.25f);
-        else
-            transform.position = _transform.position + Vector3.up * 1.5f;
+        transform.position = _transform.position + _transform.forward * _distance + Vector3.up * _height;
     }
 
     // Use this for initialization
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        OnDropped(transform);
+        OnDropped(transform, 0, 0);
     }
 
     // Update is called once per frame

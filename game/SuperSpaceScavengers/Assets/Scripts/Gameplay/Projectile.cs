@@ -26,10 +26,13 @@ public class Projectile : MonoBehaviour
     private float timeAlive = 0;
     private GameObject createdBy = null;
 
-    void Reset()
+    void OnValidate()
     {
-        collider = GetComponent<Collider>();
-        rigidbody = GetComponent<Rigidbody>();
+        if (collider == null)
+            collider = GetComponent<Collider>();
+
+        if (rigidbody == null)
+            rigidbody = GetComponent<Rigidbody>();
     }
 
     public Projectile FireNew(GameObject _createdBy, Vector3 _position, Quaternion _rotation, float _projectileSpeed, float _shotDistance, float _size, int _damage,

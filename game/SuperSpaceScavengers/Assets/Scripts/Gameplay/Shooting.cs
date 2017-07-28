@@ -7,7 +7,8 @@ public class Shooting : MonoBehaviour
 {
     [HideInInspector]
     public new Rigidbody rigidbody = null;
-    public Transform relativeTransform = null;
+
+    public Vector3 projectileOffset = Vector3.forward;
 
     public float shotsPerSecond = 1;
     //[ReadOnly]
@@ -23,8 +24,6 @@ public class Shooting : MonoBehaviour
 
     public float horizontalSpread = 10;
     public float verticalSpread = 5;
-
-    public float forwardProjectileOffset = 1.5f;
 
     [Range(0, 1)]
     public float velocityInheritanceRatio;
@@ -59,7 +58,7 @@ public class Shooting : MonoBehaviour
 
     private IEnumerator ShootProjectiles()
     {
-        Vector3 _spawnPosition = transform.GetChild(0).position + transform.forward * forwardProjectileOffset;
+        Vector3 _spawnPosition = transform.GetChild(0).position + transform.right * projectileOffset.x + transform.up * projectileOffset.y + transform.forward * projectileOffset.z;
         Vector3 _inheritedVelocity = Vector3.zero;
 
         if (rigidbody != null)

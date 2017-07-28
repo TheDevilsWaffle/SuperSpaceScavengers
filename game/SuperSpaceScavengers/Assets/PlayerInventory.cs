@@ -2,15 +2,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour
 {
     private Player player;
-    public Item item1;
-    public Item item2;
+
+    public Image item1Image;
+    public Image item2Image;
 
     public DetectionSphere itemDetection;
     public List<Item> availableItems = new List<Item>();
+
+    private Item item1_;
+    private Item item2_;
+
+    public float dropDistance = 1.25f;
+    public float dropHeight = 1.25f;
+    public float pickUpDistance = 1.5f;
+
+    public Item item1
+    {
+        get { return item1_; }
+        set { item1_ = value; OnItemUpdated(item1, item1Image); }
+    }
+    public Item item2
+    {
+        get { return item2_; }
+        set { item2_ = value; OnItemUpdated(item2, item2Image); }
+    }
+
+    private void OnItemUpdated(Item _item, Image _itemImage)
+    {
+        if (_item == null)
+        {
+            _itemImage.enabled = false;
+            return;
+        }
+        else
+            _itemImage.enabled = true;
+
+        _itemImage.color = _item.GetComponent<MeshRenderer>().material.color;// GetColor("_EmissionColor");
+    }
+
+    void OnValidate()
+    {
+        if (itemDetection != null)
+            itemDetection.sphereCollider.radius = pickUpDistance;
+    }
 
     // Use this for initialization
     void Start()
@@ -65,9 +104,9 @@ public class PlayerInventory : MonoBehaviour
         if (item1 == null)
             return;
 
-        item1.OnDropped(transform);
+        item1.OnDropped(transform, dropHeight, dropDistance);
         item1 = null;
-        
+
         if (!pickingUpItem)
             SwitchItems();
     }

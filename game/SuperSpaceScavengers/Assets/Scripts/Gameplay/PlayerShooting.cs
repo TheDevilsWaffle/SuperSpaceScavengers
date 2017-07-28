@@ -12,7 +12,7 @@ public class PlayerShooting : Shooting
     {
         base.Start();
 
-        //InputEvents.RightBasic.Subscribe(OnShoot);
+        InputEvents.UseItem.Subscribe(OnShoot);
         //InputEvents.LeftBasic.Subscribe(OnAim);
     }
 

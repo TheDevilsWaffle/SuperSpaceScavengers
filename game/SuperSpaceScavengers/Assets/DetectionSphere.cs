@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class DetectionSphere : MonoBehaviour
 {
+    [HideInInspector]
+    public SphereCollider sphereCollider;
+
     public delegate void DetectionDelegate(GameObject _gameObject);
     public DetectionDelegate callOnEnter = delegate { };
     public DetectionDelegate callOnExit = delegate { };
+
+    void OnValidate()
+    {
+        sphereCollider = GetComponent<SphereCollider>();
+    }
 
     void OnTriggerEnter(Collider _collider)
     {
