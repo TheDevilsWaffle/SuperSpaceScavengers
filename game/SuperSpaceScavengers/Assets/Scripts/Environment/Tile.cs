@@ -40,11 +40,14 @@ public class Tile : MonoBehaviour
 {
     #region FIELDS
     Transform tr;
+    [SerializeField]
     GameObject quad;
     MeshCollider quad_mc;
-    GameObject wall;
-    BoxCollider wall_bc;
-    MeshRenderer wall_mr;
+    [SerializeField]
+    GameObject space;
+    BoxCollider space_bc;
+    GameObject wall_top;
+    GameObject wall_bot;
 
     [SerializeField]
     TileType type;
@@ -76,8 +79,14 @@ public class Tile : MonoBehaviour
     void OnValidate()
     {
         //refs
-        
-
+        SetTileType(type);
+        tr = GetComponent<Transform>();
+        quad = tr.GetChild(0).gameObject;
+        quad_mc = quad.GetComponent<MeshCollider>();
+        space = tr.GetChild(1).gameObject;
+        space_bc = space.GetComponent<BoxCollider>();
+        wall_top = space.transform.GetChild(0).gameObject;
+        wall_bot = space.transform.GetChild(1).gameObject;
         //initial values
 
     }
@@ -91,9 +100,10 @@ public class Tile : MonoBehaviour
         tr = GetComponent<Transform>();
         quad = tr.GetChild(0).gameObject;
         quad_mc = quad.GetComponent<MeshCollider>();
-        wall = tr.GetChild(1).gameObject;
-        wall_bc = wall.GetComponent<BoxCollider>();
-        wall_mr = wall.GetComponent<MeshRenderer>();
+        space = tr.GetChild(1).gameObject;
+        space_bc = space.GetComponent<BoxCollider>();
+        wall_top = space.transform.GetChild(0).gameObject;
+        wall_bot = space.transform.GetChild(1).gameObject;
 
         neighbors = new Dictionary<Neighbor, Tile> { };
         //SetSubscriptions();
@@ -323,15 +333,15 @@ public class Tile : MonoBehaviour
         {
             case TileType.TILE:
                 quad.SetActive(true);
-                wall.SetActive(false);
+                space.SetActive(false);
                 break;
             case TileType.WALL:
                 quad.SetActive(true);
-                wall.SetActive(true);
+                space.SetActive(true);
                 break;
             case TileType.EMPTY:
                 quad.SetActive(false);
-                wall.SetActive(false);
+                space.SetActive(false);
                 break;
             default:
                 Debug.LogWarning("Incorrect TileType selected, please correct to either 'TILE, WALL, or EMPTY'.");
