@@ -21,6 +21,9 @@ public class PlayerInventory : MonoBehaviour
     public float dropHeight = 1.25f;
     public float pickUpDistance = 1.5f;
 
+    public float throwStrength = 8;
+    public float throwHeight = 3;
+
     public Item item1
     {
         get { return item1_; }
@@ -69,7 +72,7 @@ public class PlayerInventory : MonoBehaviour
     {
         Item _thrownItem = item1;
         DropItem1(false);
-        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * 10 + transform.up * 5f;
+        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * throwStrength + transform.up * throwHeight;
     }
 
     private void OnSwitchItem(InputEventInfo _inputEventInfo)
