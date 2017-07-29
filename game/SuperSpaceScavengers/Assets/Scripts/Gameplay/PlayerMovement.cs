@@ -77,7 +77,7 @@ public class PlayerMovement : Movement
 
     void OnDestroy()
     {
-        //InputEvents.Movement.Unsubscribe(OnMove, 0);
+        InputEvents.Movement.Unsubscribe(OnMove, 0);
         //InputEvents.Jump.Unsubscribe(OnJump, 0);
     }
 }

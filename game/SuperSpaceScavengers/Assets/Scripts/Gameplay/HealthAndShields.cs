@@ -15,25 +15,25 @@ public class HealthAndShields : MonoBehaviour
     public bool dontDisplayAtFull = true;
     public float healthDelay = 0.3f;
     public float delayedLerpSpeed = 2f;
-    public ResourceMeter healthBarPrefab = null;
-    public Vector3 offset = new Vector3(0, 0, 3);
-    private ResourceMeter healthBar = null;
+    //public ResourceMeter healthBarPrefab = null;
+    //public Vector3 offset = new Vector3(0, 0, 3);
+    public ResourceMeter healthBar = null;
 
     public delegate void HealthDelegate(int _health);
     private HealthDelegate healthChangeDelegate = delegate { };
 
     public void Start()
     {
-        if (healthBarPrefab == null || displayHealthBar == false)
-        {
-            DealDamage(0);
-            return;
-        }
+        //if (healthBarPrefab == null || displayHealthBar == false)
+        //{
+        //    DealDamage(0);
+        //    return;
+        //}
 
-        GameObject _healthBarObject = null;
-        _healthBarObject = Instantiate(healthBarPrefab.gameObject, transform.position, transform.rotation);
+        //GameObject _healthBarObject = null;
+        //_healthBarObject = Instantiate(healthBarPrefab.gameObject, transform.position, transform.rotation);
 
-        healthBar = _healthBarObject.GetComponent<ResourceMeter>();
+        //healthBar = _healthBarObject.GetComponent<ResourceMeter>();
 
         DealDamage(0);
     }

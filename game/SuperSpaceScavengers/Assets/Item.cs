@@ -1,4 +1,4 @@
-﻿using System;
+﻿//using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,17 +7,24 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     private new Rigidbody rigidbody = null;
+    private new Collider collider = null;
 
-    private bool detected = false;
+    public PlayerInventory heldBy;
+    public float itemUses = float.PositiveInfinity;
+    public bool dropOnAttemptStore = false;
+
+    [Header("Item Animations")]
     public Animate[] animateOnDetected = new Animate[0];
     public Animate[] animateOnLost = new Animate[0];
-
-    public Animate[] animateOnPickedUp = new Animate[0];
-    public Animate[] animateOnDropped = new Animate[0];
+    public Animate[] animateOnUse = new Animate[0];
 
     public void OnDetected()
     {
-        detected = true;
+        if (rigidbody.velocity.y < 0.01f && rigidbody.velocity.y > -0.01f)
+        {
+            rigidbody.velocity += Vector3.up * 2.5f;
+            rigidbody.angularVelocity += Random.onUnitSphere * 1.5f;
+        }
 
         foreach (Animate _animate in animateOnLost)
             _animate.Stop();
@@ -25,11 +32,8 @@ public class Item : MonoBehaviour
         foreach (Animate _animate in animateOnDetected)
             _animate.Play();
     }
-
     public void OnLost()
     {
-        detected = false;
-
         foreach (Animate _animate in animateOnDetected)
             _animate.Stop();
 
@@ -37,39 +41,74 @@ public class Item : MonoBehaviour
             _animate.Play();
     }
 
-    public void OnPickedUp(Transform _transform)
+    public virtual void OnUse()
     {
-        transform.position = _transform.position + Vector3.up * 100;
-        StartCoroutine(DelayedDisable());
+        if (itemUses <= 0)
+            return;
+
+        --itemUses;
+
+        foreach (Animate _animate in animateOnUse)
+            _animate.Play();
     }
 
-    private IEnumerator DelayedDisable()
+    public void Drop(Transform _transform, float _distance, float _height, float _velocityInheritance = 1)
     {
-        yield return null;
-        yield return null;
+        heldBy = null;
 
-        gameObject.SetActive(false);
-    }
-
-    public void OnDropped(Transform _transform, float _distance, float _height)
-    {
         gameObject.SetActive(true);
-        rigidbody.velocity = Vector3.zero;
-        transform.rotation = Quaternion.identity;
+        collider.enabled = true;
 
-        transform.position = _transform.position + _transform.forward * _distance + Vector3.up * _height;
+        transform.parent = null;
+        rigidbody.isKinematic = false;
+
+        rigidbody.velocity = _transform.root.GetComponent<Rigidbody>().velocity * _velocityInheritance;
+        rigidbody.angularVelocity = Random.onUnitSphere * 5;
+    }
+
+    public void Hold(Transform _transform)
+    {
+        heldBy = _transform.root.GetComponent<PlayerInventory>();
+        gameObject.SetActive(true);
+
+        //wait for one physics update so that the object is removed
+        //from range of detection collider and "lost", then equip
+        StartCoroutine(DelayedHold(_transform));
+    }
+    public void Store()
+    {
+        if (dropOnAttemptStore)
+        {
+            heldBy.storedItem = null;
+            Drop(heldBy.itemHolder, heldBy.dropDistance, heldBy.dropHeight);
+        }
+        else
+            gameObject.SetActive(false);
+    }
+
+    private IEnumerator DelayedHold(Transform _transform)
+    {
+        transform.position += Vector3.up * 100;
+        yield return new WaitForFixedUpdate();
+
+        collider.enabled = false;
+
+        transform.position = _transform.position;
+        transform.rotation = _transform.rotation;
+        transform.parent = _transform;
+
+        rigidbody.isKinematic = true;
     }
 
     // Use this for initialization
-    void Start()
+    protected void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        OnDropped(transform, 0, 0);
-    }
+        collider = GetComponent<Collider>();
 
-    // Update is called once per frame
-    void Update()
-    {
-
+        if (heldBy != null)
+            heldBy.PickUp(this);
+        else
+            Drop(transform, 0, 0, 0);
     }
 }

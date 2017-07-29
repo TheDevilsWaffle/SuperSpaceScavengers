@@ -35,10 +35,13 @@ public class Projectile : MonoBehaviour
             rigidbody = GetComponent<Rigidbody>();
     }
 
-    public Projectile FireNew(GameObject _createdBy, Vector3 _position, Quaternion _rotation, float _projectileSpeed, float _shotDistance, float _size, int _damage,
+    public Projectile FireNew(GameObject _createdBy, Vector3 _position, Quaternion _rotation, float _projectileSpeed, float _shotDistance, float _size, int _damage, Material _materialOverride,
         float _horizontalSpread = 0, float _verticalSpread = 0, Vector3 _inheritedVelocity = default(Vector3), float _seekingStrength = 0, Transform _target = null) //optional parameters
     {
         GameObject _newProjectileObject = Instantiate(gameObject, _position, _rotation);
+
+        if (_materialOverride != null)
+            _newProjectileObject.GetComponent<MeshRenderer>().material = _materialOverride;
 
         float _randomAngle = Mathf.Deg2Rad * Random.Range(-_horizontalSpread, _horizontalSpread);
         Vector3 _direction = Vector3.RotateTowards(_rotation * Vector3.forward, Mathf.Sign(_randomAngle) * (_rotation * Vector3.right), Mathf.Abs(_randomAngle), 0);

@@ -1,4 +1,4 @@
-﻿using System;
+﻿//using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,27 +12,35 @@ public class PlayerInventory : MonoBehaviour
     public Image item2Image;
 
     public DetectionSphere itemDetection;
+    [HideInInspector]
     public List<Item> availableItems = new List<Item>();
 
-    private Item item1_;
-    private Item item2_;
+    public Transform itemHolder = null;
+
+    private Item heldItem_;
+    private Item storedItem_;
+
+    public float pickUpDistance = 1.5f;
 
     public float dropDistance = 1.25f;
     public float dropHeight = 1.25f;
-    public float pickUpDistance = 1.5f;
+    public float droppedInheritedVelocity = 1;
 
     public float throwStrength = 8;
     public float throwHeight = 3;
+    public float thrownInheritedVelocity = 0.5f;
 
-    public Item item1
+    private Item closestItem = null;
+
+    public Item heldItem
     {
-        get { return item1_; }
-        set { item1_ = value; OnItemUpdated(item1, item1Image); }
+        get { return heldItem_; }
+        set { heldItem_ = value; OnItemUpdated(heldItem, item1Image); if (value != null) heldItem_.Hold(itemHolder); }
     }
-    public Item item2
+    public Item storedItem
     {
-        get { return item2_; }
-        set { item2_ = value; OnItemUpdated(item2, item2Image); }
+        get { return storedItem_; }
+        set { storedItem_ = value; OnItemUpdated(storedItem, item2Image); if (value != null) storedItem.Store(); }
     }
 
     private void OnItemUpdated(Item _item, Image _itemImage)
@@ -45,7 +53,7 @@ public class PlayerInventory : MonoBehaviour
         else
             _itemImage.enabled = true;
 
-        _itemImage.color = _item.GetComponent<MeshRenderer>().material.color;// GetColor("_EmissionColor");
+        _itemImage.color = _item.transform.GetChild(0).GetComponent<MeshRenderer>().material.color;// GetColor("_EmissionColor");
     }
 
     void OnValidate()
@@ -54,82 +62,145 @@ public class PlayerInventory : MonoBehaviour
             itemDetection.sphereCollider.radius = pickUpDistance;
     }
 
+    void Update()
+    {
+        if (availableItems.Count == 0)
+        {
+            closestItem = null;
+            return;
+        }
+
+        float _closestSqrDistance = float.PositiveInfinity;
+        Item _closestItem = null;
+
+        for (int i = 0; i < availableItems.Count; i++)
+        {
+            if(availableItems[i] == null)
+            {
+                availableItems.RemoveAt(i);
+                i--;
+
+                if (availableItems.Count == 0)
+                {
+                    closestItem = null;
+                    return;
+                }
+            }
+
+            Vector3 _vecToItem = availableItems[i].transform.position - transform.position;
+            float _sqrDistance = _vecToItem.sqrMagnitude;
+
+            if (_sqrDistance < _closestSqrDistance)
+            {
+                _closestSqrDistance = _sqrDistance;
+                _closestItem = availableItems[i];
+            }
+        }
+
+        if (_closestItem == null || _closestItem == closestItem)
+            return;
+
+        if (closestItem != null)
+            closestItem.OnLost();
+
+        _closestItem.OnDetected();
+
+        closestItem = _closestItem;
+    }
+
     // Use this for initialization
     void Start()
     {
         itemDetection.callOnEnter += OnDetectItem;
         itemDetection.callOnExit += OnLoseItem;
 
-        InputEvents.ThrowItem.Subscribe(OnThrowItem);
+        InputEvents.ThrowItem.Subscribe(ThrowItem);
         InputEvents.PickUpDropItem.Subscribe(OnPickUpDropItem);
-        InputEvents.SwitchItem.Subscribe(OnSwitchItem);
+        InputEvents.SwitchItem.Subscribe(SwitchItem);
+        InputEvents.UseItem.Subscribe(UseItem);
 
-        item1 = item1;
-        item2 = item2;
+        heldItem = heldItem;
+        storedItem = storedItem;
     }
 
-    private void OnThrowItem(InputEventInfo _inputEventInfo)
+    private void SwitchItem(InputEventInfo _inputEventInfo)
     {
-        Item _thrownItem = item1;
-        DropItem1(false);
-        _thrownItem.GetComponent<Rigidbody>().velocity = transform.forward * throwStrength + transform.up * throwHeight;
+        Swap();
+    }
+    private void ThrowItem(InputEventInfo _inputEventInfo)
+    {
+        if (heldItem == null)
+            return;
+
+        heldItem.Drop(itemHolder, dropHeight, dropDistance, thrownInheritedVelocity);
+
+        heldItem.GetComponent<Rigidbody>().velocity += transform.forward * throwStrength + transform.up * throwHeight;
+        heldItem.GetComponent<Rigidbody>().angularVelocity = heldItem.transform.right * 15;
+
+        heldItem = null;
+        Swap();
+    }
+    protected void UseItem(InputEventInfo _inputEventInfo)
+    {
+        if (heldItem != null)
+            heldItem.OnUse();
     }
 
-    private void OnSwitchItem(InputEventInfo _inputEventInfo)
+    public void Swap()
     {
-        SwitchItems();
-    }
-
-    public void SwitchItems()
-    {
-        Item _itemTemp = item1;
-        item1 = item2;
-        item2 = _itemTemp;
+        Item _itemTemp = heldItem;
+        heldItem = storedItem;
+        storedItem = _itemTemp;
     }
 
     private void OnDetectItem(GameObject _gameObject)
     {
-        _gameObject.GetComponent<Item>().OnDetected();
         availableItems.Add(_gameObject.GetComponent<Item>());
     }
-
     private void OnLoseItem(GameObject _gameObject)
     {
-        _gameObject.GetComponent<Item>().OnLost();
-        availableItems.Remove(_gameObject.GetComponent<Item>());
+        Item _item = _gameObject.GetComponent<Item>();
+
+        if (_item == closestItem)
+            _item.OnLost();
+
+        availableItems.Remove(_item);
     }
 
-    private void PickUp(Item item)
+    public void PickUp(Item item)
     {
-        if (item1 != null)
+        if (heldItem != null)
         {
-            if (item2 == null)
-                item2 = item1;
+            if (storedItem == null)
+                storedItem = heldItem;
             else
-                DropItem1(true); //true because we are attempting to pick up another item
+            {
+                heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+                heldItem = null;
+            }
         }
 
-        item1 = availableItems[0];
-        //availableItems.Remove(item1);
-        item1.OnPickedUp(transform);
-    }
-    private void DropItem1(bool pickingUpItem)
-    {
-        if (item1 == null)
-            return;
-
-        item1.OnDropped(transform, dropHeight, dropDistance);
-        item1 = null;
-
-        if (!pickingUpItem)
-            SwitchItems();
+        heldItem = item;
     }
 
     private void OnPickUpDropItem(InputEventInfo _inputEventInfo)
     {
-        if (availableItems.Count > 0)
-            PickUp(availableItems[0]);
-        else
-            DropItem1(false); //false because we are not picking up another item
+        if (availableItems.Count > 0) //objects are in range, pick up closest
+            PickUp(closestItem);
+        else if (heldItem != null) //no objects are in range, drop heldItem
+        {
+            heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+            heldItem = null;
+
+            Swap(); //will switch to secondary (if present)
+        }
+    }
+
+    void Destroy()
+    {
+        InputEvents.ThrowItem.Unsubscribe(ThrowItem);
+        InputEvents.PickUpDropItem.Unsubscribe(OnPickUpDropItem);
+        InputEvents.SwitchItem.Unsubscribe(SwitchItem);
+        InputEvents.UseItem.Unsubscribe(UseItem);
     }
 }
