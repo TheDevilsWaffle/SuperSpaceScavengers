@@ -76,7 +76,14 @@ public class Tile : MonoBehaviour
     void OnValidate()
     {
         //refs
-        
+        tr = GetComponent<Transform>();
+        quad = tr.GetChild(0).gameObject;
+        quad_mc = quad.GetComponent<MeshCollider>();
+        wall = tr.GetChild(1).gameObject;
+        wall_bc = wall.GetComponent<BoxCollider>();
+        wall_mr = wall.GetComponent<MeshRenderer>();
+
+        SetTileType(type);
 
         //initial values
 
