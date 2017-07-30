@@ -1,4 +1,5 @@
 ﻿//using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class PlayerInventory : MonoBehaviour
     public List<Item> availableItems = new List<Item>();
 
     public Transform itemHolder = null;
+    public AnimationCurve pickUpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private Item heldItem_;
     private Item storedItem_;
@@ -75,7 +77,7 @@ public class PlayerInventory : MonoBehaviour
 
         for (int i = 0; i < availableItems.Count; i++)
         {
-            if(availableItems[i] == null)
+            if (availableItems[i] == null)
             {
                 availableItems.RemoveAt(i);
                 i--;
@@ -129,28 +131,65 @@ public class PlayerInventory : MonoBehaviour
     }
     private void ThrowItem(InputEventInfo _inputEventInfo)
     {
-        if (heldItem == null)
+        if (heldItem == null || heldItem.beingPickedUp)
             return;
 
+        Item _thrownItem = heldItem;
         heldItem.Drop(itemHolder, dropHeight, dropDistance, thrownInheritedVelocity);
 
-        heldItem.GetComponent<Rigidbody>().velocity += transform.forward * throwStrength + transform.up * throwHeight;
-        heldItem.GetComponent<Rigidbody>().angularVelocity = heldItem.transform.right * 15;
-
-        heldItem = null;
+        _thrownItem.rigidbody.velocity += transform.forward * throwStrength + transform.up * throwHeight;
+        _thrownItem.rigidbody.maxAngularVelocity = 30;
+        _thrownItem.rigidbody.angularVelocity = _thrownItem.transform.right * _thrownItem.rigidbody.velocity.magnitude;
+        
         Swap();
     }
     protected void UseItem(InputEventInfo _inputEventInfo)
     {
-        if (heldItem != null)
+        if (heldItem != null && !heldItem.beingPickedUp)
             heldItem.OnUse();
+    }
+    private void OnPickUpDropItem(InputEventInfo _inputEventInfo)
+    {
+        if (heldItem != null && heldItem.beingPickedUp)
+            return;
+
+        if (availableItems.Count > 0) //objects are in range, pick up closest
+            PickUp(closestItem);
+        else if (heldItem != null) //no objects are in range, drop heldItem
+        {
+            heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+            heldItem = null;
+
+            Swap(); //will switch to secondary (if present)
+        }
     }
 
     public void Swap()
     {
+        if (heldItem != null && heldItem.beingPickedUp)
+            return;
+
         Item _itemTemp = heldItem;
         heldItem = storedItem;
         storedItem = _itemTemp;
+    }
+    public void PickUp(Item item)
+    {
+        if (heldItem != null && heldItem.beingPickedUp)
+            return;
+
+        if (heldItem != null)
+        {
+            if (storedItem == null)
+                storedItem = heldItem;
+            else
+            {
+                heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+                heldItem = null;
+            }
+        }
+
+        heldItem = item;
     }
 
     private void OnDetectItem(GameObject _gameObject)
@@ -167,40 +206,11 @@ public class PlayerInventory : MonoBehaviour
         availableItems.Remove(_item);
     }
 
-    public void PickUp(Item item)
-    {
-        if (heldItem != null)
-        {
-            if (storedItem == null)
-                storedItem = heldItem;
-            else
-            {
-                heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
-                heldItem = null;
-            }
-        }
-
-        heldItem = item;
-    }
-
-    private void OnPickUpDropItem(InputEventInfo _inputEventInfo)
-    {
-        if (availableItems.Count > 0) //objects are in range, pick up closest
-            PickUp(closestItem);
-        else if (heldItem != null) //no objects are in range, drop heldItem
-        {
-            heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
-            heldItem = null;
-
-            Swap(); //will switch to secondary (if present)
-        }
-    }
-
     void Destroy()
     {
-        InputEvents.ThrowItem.Unsubscribe(ThrowItem);
-        InputEvents.PickUpDropItem.Unsubscribe(OnPickUpDropItem);
         InputEvents.SwitchItem.Unsubscribe(SwitchItem);
+        InputEvents.ThrowItem.Unsubscribe(ThrowItem);
         InputEvents.UseItem.Unsubscribe(UseItem);
+        InputEvents.PickUpDropItem.Unsubscribe(OnPickUpDropItem);
     }
 }

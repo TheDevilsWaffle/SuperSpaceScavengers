@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ public class DamageInsideArea : MonoBehaviour
     public int damagePerTick = 10;
     public float timeBetweenTicks = 1;
     public float forcePerTick = 10;
+    public float upwardForce = 0.5f;
 
     // Use this for initialization
     void Start()
@@ -25,13 +25,26 @@ public class DamageInsideArea : MonoBehaviour
 
             for (int j = 0; j < _colliders.Length; j++)
             {
-                HealthAndShields _health = _colliders[j].GetComponent<HealthAndShields>();
-                if (_health != null)
-                    _health.DealDamage(damagePerTick);
+                if (_colliders[j].transform.root == transform.root)
+                    continue;
 
                 Rigidbody _rigidbody = _colliders[j].GetComponent<Rigidbody>();
                 if (_rigidbody != null)
-                    _rigidbody.AddForce((_rigidbody.position - transform.position).normalized * forcePerTick, ForceMode.Impulse);
+                {
+                    Vector3 _vecToTarget = (_rigidbody.position - transform.position);
+                    float _distanceToTarget = _vecToTarget.magnitude;
+                    if (_distanceToTarget == 0)
+                        continue;
+                    _vecToTarget /= _distanceToTarget;
+
+                    _rigidbody.AddForce(new Vector3(_vecToTarget.x, upwardForce, _vecToTarget.z) * forcePerTick, ForceMode.Impulse);
+                    _rigidbody.maxAngularVelocity = 30;
+                    _rigidbody.angularVelocity += Random.onUnitSphere * forcePerTick;
+                }
+
+                HealthAndShields _health = _colliders[j].GetComponent<HealthAndShields>();
+                if (_health != null)
+                    _health.DealDamage(damagePerTick);
             }
 
             tickCount--;

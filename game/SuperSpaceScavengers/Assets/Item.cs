@@ -6,12 +6,17 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Item : MonoBehaviour
 {
-    private new Rigidbody rigidbody = null;
-    private new Collider collider = null;
+    [HideInInspector]
+    public new Rigidbody rigidbody = null;
+    protected new Collider collider = null;
+
+    public Vector3 heldRotation = Vector3.zero;
 
     public PlayerInventory heldBy;
     public float itemUses = float.PositiveInfinity;
     public bool dropOnAttemptStore = false;
+
+    public bool beingPickedUp = false;
 
     [Header("Item Animations")]
     public Animate[] animateOnDetected = new Animate[0];
@@ -54,7 +59,11 @@ public class Item : MonoBehaviour
 
     public void Drop(Transform _transform, float _distance, float _height, float _velocityInheritance = 1)
     {
-        heldBy = null;
+        if (heldBy != null)
+        {
+            heldBy.heldItem = null;
+            heldBy = null;
+        }
 
         gameObject.SetActive(true);
         collider.enabled = true;
@@ -88,16 +97,36 @@ public class Item : MonoBehaviour
 
     private IEnumerator DelayedHold(Transform _transform)
     {
+        beingPickedUp = true;
+
+        Vector3 _startPosition = transform.position;
+        transform.parent = _transform;
+        Quaternion _startRotation = transform.localRotation;
+        
         transform.position += Vector3.up * 100;
         yield return new WaitForFixedUpdate();
 
         collider.enabled = false;
+        rigidbody.isKinematic = true;
+
+        float _timer = 0;
+        float _duration = 0.25f;
+
+        while (_timer < _duration)
+        {
+            _timer += Time.deltaTime;
+            float _ratio = heldBy.pickUpCurve.Evaluate(_timer / _duration);
+
+            transform.position = Vector3.Lerp(_startPosition, _transform.position, _ratio);
+            transform.localRotation = Quaternion.Lerp(_startRotation, Quaternion.Euler(heldRotation), _ratio);
+
+            yield return null;
+        }
 
         transform.position = _transform.position;
-        transform.rotation = _transform.rotation;
-        transform.parent = _transform;
+        transform.localRotation = Quaternion.Euler(heldRotation);
 
-        rigidbody.isKinematic = true;
+        beingPickedUp = false;
     }
 
     // Use this for initialization

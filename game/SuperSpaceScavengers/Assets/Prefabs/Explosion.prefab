@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1741947643593236}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.36, y: -0, z: 1.16}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4740648973265526}
@@ -128,7 +128,8 @@ MonoBehaviour:
   tickCount: 1
   damagePerTick: 30
   timeBetweenTicks: 1
-  forcePerTick: 50
+  forcePerTick: 20
+  upwardForce: 0.2
 --- !u!198 &198837859535866720
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -188,7 +189,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1367479156
+  randomSeed: -294606953
   InitialModule:
     serializedVersion: 3
     enabled: 1
