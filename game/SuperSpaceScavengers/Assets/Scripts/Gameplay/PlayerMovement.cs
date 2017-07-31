@@ -8,6 +8,9 @@ public class PlayerMovement : Movement
 {
     private Player player;
 
+    public GameObject createOnLand = null;
+    private float creationTimer = 0;
+
     void Start()
     {
         player = GetComponent<Player>();
@@ -34,9 +37,18 @@ public class PlayerMovement : Movement
         {
             foreach (Animate animate in runAnimations)
                 animate.Play();
+
+            creationTimer = runAnimations[0].defaultStopRatio / animationBaseSpeeds[0];
         }
         else if (_inputEventInfo.inputState == InputState.Active)
         {
+            creationTimer += Time.deltaTime;
+            if (creationTimer > 0.5f / animationBaseSpeeds[0])
+            {
+                Instantiate(createOnLand, transform.position, transform.rotation).transform.localScale *= 0.45f;
+                creationTimer -= 0.5f / animationBaseSpeeds[0];
+            }
+
             for (int i = 0; i < runAnimations.Length; i++)
                 runAnimations[i].speed = animationBaseSpeeds[i] * Mathf.Max(0.5f, inputMagLastFrame);
 

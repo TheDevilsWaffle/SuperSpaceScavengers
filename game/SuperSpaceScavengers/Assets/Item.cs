@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class Item : MonoBehaviour
+public class Item : ItemReference
 {
+    public override Item item { get { return this; } }
+
     [HideInInspector]
     public new Rigidbody rigidbody = null;
     protected new Collider collider = null;
 
+    public Vector3 heldOffset = Vector3.zero;
     public Vector3 heldRotation = Vector3.zero;
 
     public PlayerInventory heldBy;
@@ -72,12 +75,12 @@ public class Item : MonoBehaviour
         rigidbody.isKinematic = false;
 
         rigidbody.velocity = _transform.root.GetComponent<Rigidbody>().velocity * _velocityInheritance;
+        rigidbody.maxAngularVelocity = 30;
         rigidbody.angularVelocity = Random.onUnitSphere * 5;
     }
 
-    public void Hold(Transform _transform)
+    public virtual void Hold(Transform _transform)
     {
-        heldBy = _transform.root.GetComponent<PlayerInventory>();
         gameObject.SetActive(true);
 
         //wait for one physics update so that the object is removed
@@ -109,6 +112,8 @@ public class Item : MonoBehaviour
         collider.enabled = false;
         rigidbody.isKinematic = true;
 
+        heldBy = _transform.root.GetComponent<PlayerInventory>();
+
         float _timer = 0;
         float _duration = 0.25f;
 
@@ -117,13 +122,13 @@ public class Item : MonoBehaviour
             _timer += Time.deltaTime;
             float _ratio = heldBy.pickUpCurve.Evaluate(_timer / _duration);
 
-            transform.position = Vector3.Lerp(_startPosition, _transform.position, _ratio);
+            transform.position = Vector3.Lerp(_startPosition, _transform.TransformPoint(heldOffset), _ratio);
             transform.localRotation = Quaternion.Lerp(_startRotation, Quaternion.Euler(heldRotation), _ratio);
 
             yield return null;
         }
 
-        transform.position = _transform.position;
+        transform.position = _transform.TransformPoint(heldOffset);
         transform.localRotation = Quaternion.Euler(heldRotation);
 
         beingPickedUp = false;

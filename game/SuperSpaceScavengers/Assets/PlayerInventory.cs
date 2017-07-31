@@ -194,11 +194,19 @@ public class PlayerInventory : MonoBehaviour
 
     private void OnDetectItem(GameObject _gameObject)
     {
-        availableItems.Add(_gameObject.GetComponent<Item>());
+        Item _item = _gameObject.GetComponent<Item>();
+
+        if (_item.heldBy != null)
+            return;
+
+        availableItems.Add(_item);
     }
     private void OnLoseItem(GameObject _gameObject)
     {
         Item _item = _gameObject.GetComponent<Item>();
+
+        if (_item.heldBy != null)
+            return;
 
         if (_item == closestItem)
             _item.OnLost();

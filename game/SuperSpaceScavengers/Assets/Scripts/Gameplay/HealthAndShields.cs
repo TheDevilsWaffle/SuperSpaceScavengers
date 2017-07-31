@@ -19,6 +19,8 @@ public class HealthAndShields : MonoBehaviour
     //public Vector3 offset = new Vector3(0, 0, 3);
     public ResourceMeter healthBar = null;
 
+    public GameObject[] createOnKilled;
+
     public delegate void HealthDelegate(int _health);
     private HealthDelegate healthChangeDelegate = delegate { };
 
@@ -87,6 +89,9 @@ public class HealthAndShields : MonoBehaviour
     void Kill()
     {
         Destroy(gameObject);
+
+        foreach (GameObject _gameObject in createOnKilled)
+            Instantiate(_gameObject, transform.position, transform.rotation);
     }
 
     // Update is called once per frame

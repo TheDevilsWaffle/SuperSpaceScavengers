@@ -472,6 +472,7 @@ MonoBehaviour:
   - {fileID: 114264939574897920}
   rotationSpeed: 45
   faceVelocity: 1
+  createOnLand: {fileID: 0}
 --- !u!114 &114181515456507312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -875,6 +876,7 @@ MonoBehaviour:
   healthDelay: 0.3
   delayedLerpSpeed: 2
   healthBar: {fileID: 114181515456507312}
+  createOnKilled: []
 --- !u!114 &114753271926458240
 MonoBehaviour:
   m_ObjectHideFlags: 1

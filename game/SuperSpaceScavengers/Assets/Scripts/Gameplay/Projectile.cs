@@ -102,7 +102,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider _collider)
     {
-        if (_collider.GetComponent<Projectile>() != null || _collider.gameObject == createdBy)
+        if (_collider.GetComponent<Projectile>() != null || _collider.gameObject == createdBy || _collider.isTrigger)
             return;
 
         HealthAndShields _healthAndShields = _collider.GetComponent<HealthAndShields>();
@@ -117,7 +117,7 @@ public class Projectile : MonoBehaviour
     {
         if (createOnDestroy != null)
         {
-            GameObject _createdObject = Instantiate(createOnDestroy, transform.position - rigidbody.velocity * Time.fixedDeltaTime, transform.rotation);
+            GameObject _createdObject = Instantiate(createOnDestroy, transform.position - rigidbody.velocity * Time.fixedDeltaTime * 1f, transform.rotation);
             _createdObject.transform.localScale = transform.localScale * createOnDestroySizeRatio;
         }
 

@@ -5,7 +5,9 @@ using UnityEngine;
 public class SwingableItem : Item
 {
     [Header("Swingable Settings")]
-    public Collider blade;
+    public BoxCollider blade;
+    public BoxCollider hilt;
+
     private Transform parent;
     private bool hasParent;
 
@@ -15,6 +17,11 @@ public class SwingableItem : Item
     private Vector3 parentStartPosition;
     private Quaternion parentStartRotation;
     private Vector3 parentStartScale;
+
+    private Vector3 relativeStartPosition;
+    private Quaternion relativeStartRotation;
+
+    private bool canUnstick = true;
 
     //// Use this for initialization
     public new void Start()
@@ -34,6 +41,11 @@ public class SwingableItem : Item
 
         StartCoroutine(DamageAfterDelay());
     }
+    public override void Hold(Transform _transform)
+    {
+        Unstick();
+        base.Hold(_transform);
+    }
 
     private IEnumerator DamageAfterDelay()
     {
@@ -41,7 +53,7 @@ public class SwingableItem : Item
 
         float _timer = 0;
 
-        while(_timer < 0.1f)
+        while (_timer < 0.1f)
         {
             _timer += Time.deltaTime;
             bool _dealtDamage = false;
@@ -83,7 +95,7 @@ public class SwingableItem : Item
 
             yield return null;
         }
-        
+
     }
 
     // Update is called once per frame
@@ -93,6 +105,9 @@ public class SwingableItem : Item
         {
             Stick(_collision.collider.transform);
 
+            if (parent == null)
+                return;
+
             HealthAndShields _health = parent.GetComponent<HealthAndShields>();
             if (_health != null)
                 _health.DealDamage(20);
@@ -101,6 +116,9 @@ public class SwingableItem : Item
 
     void Stick(Transform _stuckInObject)
     {
+        if (beingPickedUp)
+            return;
+
         parent = _stuckInObject;
         hasParent = true;
 
@@ -108,7 +126,43 @@ public class SwingableItem : Item
         parentStartRotation = parent.rotation;
         parentStartScale = parent.lossyScale;
 
+        relativeStartPosition = parent.InverseTransformPoint(transform.position);
+        relativeStartRotation = Quaternion.Inverse(parent.transform.rotation) * transform.rotation;
+
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
+
+        blade.enabled = false;
+        hilt.enabled = false;
+        rigidbody.useGravity = false;
+
         rigidbody.isKinematic = true;
+
+        //rigidbody.Sleep();
+        //rigidbody.sleepThreshold = 10;
+
+        //StartCoroutine(ControlUnstick());
+    }
+
+    private IEnumerator ControlUnstick()
+    {
+        canUnstick = false;
+        yield return new WaitForSeconds(0.25f);
+        canUnstick = true;
+    }
+
+    public void Unstick()
+    {
+        rigidbody.isKinematic = false;
+        rigidbody.AddForceAtPosition(Vector3.up * 1f, transform.position + transform.forward * 0.3f + transform.up * 0.03f, ForceMode.VelocityChange);
+        rigidbody.angularVelocity = Random.onUnitSphere * 3;
+
+        blade.enabled = true;
+        hilt.enabled = true;
+        rigidbody.useGravity = true;
+
+        parent = null;
+        hasParent = false;
     }
 
     void Update()
@@ -118,22 +172,34 @@ public class SwingableItem : Item
         if (!hasParent)
             return;
 
-        if(parent == null)
+        if (parent == null || !parent.gameObject.activeInHierarchy/* || !rigidbody.IsSleeping() && canUnstick*/)
         {
-            rigidbody.isKinematic = false;
-            rigidbody.AddForceAtPosition(Vector3.up * 1f, transform.position + transform.forward * 0.3f + transform.up * 0.03f, ForceMode.VelocityChange);
-            rigidbody.angularVelocity = Random.onUnitSphere * 3;
-
-            hasParent = false;
+            Unstick();
         }
-        else if (parentStartPosition != parent.position || parentStartRotation != parent.rotation || parentStartScale != parent.lossyScale)
+        else
         {
-            rigidbody.isKinematic = false;
-            rigidbody.AddForceAtPosition((parent.position - parentStartPosition) * 120 * Time.deltaTime + Vector3.up * 1f, transform.position + transform.forward * 0.3f + transform.up * 0.03f, ForceMode.VelocityChange);
-            rigidbody.angularVelocity = Random.onUnitSphere * 3;
+            Vector3 _relativePosition = parent.TransformPoint(relativeStartPosition);
 
-            parent = null;
-            hasParent = false;
+            //transform.position = parent.TransformPoint(relativeStartPosition);
+            //transform.rotation = parent.transform.rotation * relativeStartRotation;
+
+            //if ((_relativePosition - transform.position).magnitude > 0.25f)
+            //{
+            //    Unstick();
+            //    return;
+            //}
+
+            rigidbody.MovePosition(parent.TransformPoint(relativeStartPosition));
+            rigidbody.MoveRotation(parent.transform.rotation * relativeStartRotation);
         }
+        //else if (parentStartPosition != parent.position || parentStartRotation != parent.rotation || parentStartScale != parent.lossyScale)
+        //{
+        //    rigidbody.isKinematic = false;
+        //    rigidbody.AddForceAtPosition((parent.position - parentStartPosition) * 120 * Time.deltaTime + Vector3.up * 1f, transform.position + transform.forward * 0.3f + transform.up * 0.03f, ForceMode.VelocityChange);
+        //    rigidbody.angularVelocity = Random.onUnitSphere * 3;
+
+        //    parent = null;
+        //    hasParent = false;
+        //}
     }
 }
