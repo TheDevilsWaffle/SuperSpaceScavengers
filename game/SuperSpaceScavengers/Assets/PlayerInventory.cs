@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class PlayerInventory : MonoBehaviour
 {
     private Player player;
+    public new Rigidbody rigidbody;
 
     public Image item1Image;
     public Image item2Image;
@@ -31,6 +32,9 @@ public class PlayerInventory : MonoBehaviour
     public float throwStrength = 8;
     public float throwHeight = 3;
     public float thrownInheritedVelocity = 0.5f;
+
+    public LookAtObject leftArm;
+    public LookAtObject rightArm;
 
     private Item closestItem = null;
 
@@ -62,6 +66,9 @@ public class PlayerInventory : MonoBehaviour
     {
         if (itemDetection != null)
             itemDetection.sphereCollider.radius = pickUpDistance;
+
+        if (rigidbody == null)
+            rigidbody = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -135,7 +142,7 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         Item _thrownItem = heldItem;
-        heldItem.Drop(itemHolder, dropHeight, dropDistance, thrownInheritedVelocity);
+        heldItem.Drop(thrownInheritedVelocity);
 
         _thrownItem.rigidbody.velocity += transform.forward * throwStrength + transform.up * throwHeight;
         _thrownItem.rigidbody.maxAngularVelocity = 30;
@@ -157,7 +164,7 @@ public class PlayerInventory : MonoBehaviour
             PickUp(closestItem);
         else if (heldItem != null) //no objects are in range, drop heldItem
         {
-            heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+            heldItem.Drop(droppedInheritedVelocity);
             heldItem = null;
 
             Swap(); //will switch to secondary (if present)
@@ -168,6 +175,14 @@ public class PlayerInventory : MonoBehaviour
     {
         if (heldItem != null && heldItem.beingPickedUp)
             return;
+
+        if (heldItem != null && heldItem.dropOnAttemptStore)
+        {
+            heldItem.Drop();
+            heldItem = storedItem;
+            storedItem = null;
+            return;
+        }
 
         Item _itemTemp = heldItem;
         heldItem = storedItem;
@@ -184,7 +199,7 @@ public class PlayerInventory : MonoBehaviour
                 storedItem = heldItem;
             else
             {
-                heldItem.Drop(itemHolder, dropHeight, dropDistance, droppedInheritedVelocity);
+                heldItem.Drop(droppedInheritedVelocity);
                 heldItem = null;
             }
         }

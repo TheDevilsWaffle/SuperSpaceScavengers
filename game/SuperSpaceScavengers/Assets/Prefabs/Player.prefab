@@ -381,6 +381,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79e92e66a408f1d45b7b1e55709f39ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigidbody: {fileID: 54772203856938272}
   item1Image: {fileID: 0}
   item2Image: {fileID: 0}
   itemDetection: {fileID: 114753271926458240}
@@ -411,6 +412,8 @@ MonoBehaviour:
   throwStrength: 6
   throwHeight: 5
   thrownInheritedVelocity: 0.85
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
 --- !u!114 &114159172615790788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -876,6 +879,7 @@ MonoBehaviour:
   healthDelay: 0.3
   delayedLerpSpeed: 2
   healthBar: {fileID: 114181515456507312}
+  fixedFrameDelay: 1
   createOnKilled: []
 --- !u!114 &114753271926458240
 MonoBehaviour:

@@ -19,6 +19,8 @@ public class HealthAndShields : MonoBehaviour
     //public Vector3 offset = new Vector3(0, 0, 3);
     public ResourceMeter healthBar = null;
 
+    public int fixedFrameDelay = 1;
+
     public GameObject[] createOnKilled;
 
     public delegate void HealthDelegate(int _health);
@@ -56,7 +58,7 @@ public class HealthAndShields : MonoBehaviour
             else
                 healthBar.enabled = true;
         }
-        
+
         healthChangeDelegate(health);
 
         if (health <= 0)
@@ -88,6 +90,17 @@ public class HealthAndShields : MonoBehaviour
 
     void Kill()
     {
+        StartCoroutine(DelayedKill());
+    }
+
+    private IEnumerator DelayedKill()
+    {
+        while (fixedFrameDelay > 0)
+        {
+            fixedFrameDelay--;
+            yield return new WaitForFixedUpdate();
+        }
+
         Destroy(gameObject);
 
         foreach (GameObject _gameObject in createOnKilled)

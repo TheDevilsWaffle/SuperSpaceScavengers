@@ -9,7 +9,13 @@ public class SwingableItem : Item
     public BoxCollider hilt;
 
     private Transform parent;
-    private bool hasParent;
+    private bool stuck;
+
+    public bool isStuck
+    {
+        get { return stuck; }
+        private set { stuck = value; }
+    }
 
     public float timeBetweenSwings = 1;
     private float timeSinceSwung = 0;
@@ -28,6 +34,8 @@ public class SwingableItem : Item
     {
         base.Start();
         timeSinceSwung = timeBetweenSwings;
+
+        Unstick();
     }
 
     public override void OnUse()
@@ -58,7 +66,7 @@ public class SwingableItem : Item
             _timer += Time.deltaTime;
             bool _dealtDamage = false;
 
-            Collider[] _colliders = Physics.OverlapBox(blade.transform.position, new Vector3(0.3f, 0.5f, 0.3f), blade.transform.rotation);
+            Collider[] _colliders = Physics.OverlapBox(blade.transform.position, new Vector3(0.05f, 0.001f, 0.3f), blade.transform.rotation);
             foreach (Collider _collider in _colliders)
             {
                 if (_collider.transform.root == transform.root)
@@ -82,7 +90,7 @@ public class SwingableItem : Item
                     if (heldBy == null)
                         continue;
 
-                    Drop(heldBy.itemHolder, heldBy.dropDistance, heldBy.dropHeight);
+                    Drop();
                     Stick(_collider.transform);
                 }
 
@@ -120,7 +128,7 @@ public class SwingableItem : Item
             return;
 
         parent = _stuckInObject;
-        hasParent = true;
+        stuck = true;
 
         parentStartPosition = parent.position;
         parentStartRotation = parent.rotation;
@@ -162,14 +170,14 @@ public class SwingableItem : Item
         rigidbody.useGravity = true;
 
         parent = null;
-        hasParent = false;
+        stuck = false;
     }
 
     void Update()
     {
         timeSinceSwung += Time.deltaTime;
 
-        if (!hasParent)
+        if (!stuck)
             return;
 
         if (parent == null || !parent.gameObject.activeInHierarchy/* || !rigidbody.IsSleeping() && canUnstick*/)

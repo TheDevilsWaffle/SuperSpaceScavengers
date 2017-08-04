@@ -21,6 +21,8 @@ public class Item : ItemReference
 
     public bool beingPickedUp = false;
 
+    public Transform holdPoint;
+
     [Header("Item Animations")]
     public Animate[] animateOnDetected = new Animate[0];
     public Animate[] animateOnLost = new Animate[0];
@@ -60,23 +62,32 @@ public class Item : ItemReference
             _animate.Play();
     }
 
-    public void Drop(Transform _transform, float _distance, float _height, float _velocityInheritance = 1)
+    public void Drop(float _velocityInheritance = 1)
     {
-        if (heldBy != null)
-        {
-            heldBy.heldItem = null;
-            heldBy = null;
-        }
-
         gameObject.SetActive(true);
         collider.enabled = true;
 
         transform.parent = null;
         rigidbody.isKinematic = false;
 
-        rigidbody.velocity = _transform.root.GetComponent<Rigidbody>().velocity * _velocityInheritance;
+        if (heldBy != null)
+        {
+            heldBy.leftArm.positionObject = null;
+            heldBy.rightArm.positionObject = null;
+
+            heldBy.leftArm.transform.localPosition = heldBy.leftArm.restingPosition;
+            heldBy.rightArm.transform.localPosition = heldBy.rightArm.restingPosition;
+
+            if (heldBy.rigidbody != null)
+                rigidbody.velocity = heldBy.rigidbody.velocity * _velocityInheritance;
+
+            heldBy.heldItem = null;
+            heldBy = null;
+        }
+
         rigidbody.maxAngularVelocity = 30;
         rigidbody.angularVelocity = Random.onUnitSphere * 5;
+
     }
 
     public virtual void Hold(Transform _transform)
@@ -89,13 +100,13 @@ public class Item : ItemReference
     }
     public void Store()
     {
-        if (dropOnAttemptStore)
-        {
-            heldBy.storedItem = null;
-            Drop(heldBy.itemHolder, heldBy.dropDistance, heldBy.dropHeight);
-        }
-        else
-            gameObject.SetActive(false);
+        heldBy.leftArm.positionObject = null;
+        heldBy.rightArm.positionObject = null;
+
+        heldBy.leftArm.transform.localPosition = heldBy.leftArm.restingPosition;
+        heldBy.rightArm.transform.localPosition = heldBy.rightArm.restingPosition;
+
+        gameObject.SetActive(false);
     }
 
     private IEnumerator DelayedHold(Transform _transform)
@@ -105,7 +116,7 @@ public class Item : ItemReference
         Vector3 _startPosition = transform.position;
         transform.parent = _transform;
         Quaternion _startRotation = transform.localRotation;
-        
+
         transform.position += Vector3.up * 100;
         yield return new WaitForFixedUpdate();
 
@@ -113,6 +124,9 @@ public class Item : ItemReference
         rigidbody.isKinematic = true;
 
         heldBy = _transform.root.GetComponent<PlayerInventory>();
+
+        heldBy.leftArm.startPosition = heldBy.leftArm.transform.position;
+        heldBy.rightArm.startPosition = heldBy.rightArm.transform.position;
 
         float _timer = 0;
         float _duration = 0.25f;
@@ -122,11 +136,20 @@ public class Item : ItemReference
             _timer += Time.deltaTime;
             float _ratio = heldBy.pickUpCurve.Evaluate(_timer / _duration);
 
+            if (holdPoint.position.y < 50)
+            {
+                heldBy.leftArm.transform.position = Vector3.Lerp(heldBy.leftArm.startPosition, holdPoint.TransformPoint(heldBy.leftArm.positionOffset), _ratio);
+                heldBy.rightArm.transform.position = Vector3.Lerp(heldBy.rightArm.startPosition, holdPoint.TransformPoint(heldBy.rightArm.positionOffset), _ratio);
+            }
+
             transform.position = Vector3.Lerp(_startPosition, _transform.TransformPoint(heldOffset), _ratio);
             transform.localRotation = Quaternion.Lerp(_startRotation, Quaternion.Euler(heldRotation), _ratio);
 
             yield return null;
         }
+
+        heldBy.leftArm.positionObject = holdPoint;
+        heldBy.rightArm.positionObject = holdPoint;
 
         transform.position = _transform.TransformPoint(heldOffset);
         transform.localRotation = Quaternion.Euler(heldRotation);
@@ -140,9 +163,12 @@ public class Item : ItemReference
         rigidbody = GetComponent<Rigidbody>();
         collider = GetComponent<Collider>();
 
+        if (holdPoint == null)
+            holdPoint = transform.GetChild(0);
+
         if (heldBy != null)
             heldBy.PickUp(this);
         else
-            Drop(transform, 0, 0, 0);
+            Drop(0);
     }
 }

@@ -25,8 +25,6 @@ public class DamageOnImpact : MonoBehaviour
         float _impulseTotal = _collision.impulse.magnitude;
         float _additionalImpulse = _impulseTotal - _impulseThreshold;
 
-        Debug.Log(_impulseTotal);
-
         if (_impulseTotal > _impulseThreshold)
             health.DealDamage(baseDamage + (int)_additionalImpulse * damagePerImpulseUnit);
     }

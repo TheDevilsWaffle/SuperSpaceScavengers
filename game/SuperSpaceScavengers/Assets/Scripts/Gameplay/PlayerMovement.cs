@@ -63,6 +63,17 @@ public class PlayerMovement : Movement
             //    targetDirection = new Vector3(_inputEventInfo.dualAxisValue.x, -_inputEventInfo.dualAxisValue.y, 0);
 
             player.sprite.flipX = targetDirection.x < 0;
+
+            if (targetDirection.x != 0)
+                player.sprite.transform.GetChild(0).localScale = new Vector3(targetDirection.x < 0 ? -1 : 1, 0.9359878f, 1);
+
+            transform.GetChild(0).GetChild(0).localEulerAngles = new Vector3(0, 0, targetDirection.x * -15);
+            //player.sprite.transform.GetChild(0).GetChild(0).LookAt(player.sprite.transform.GetChild(0).GetChild(0).TransformPoint(targetDirection));
+
+            if (targetDirection.z <= 0)
+                player.sprite.transform.GetChild(0).localEulerAngles = new Vector3(-35, 180, 0);
+            else if (targetDirection.z > 0)
+                player.sprite.transform.GetChild(0).localEulerAngles = new Vector3(35, 0, 0);
         }
         else
         {
@@ -70,6 +81,7 @@ public class PlayerMovement : Movement
                 animate.Stop(Animate.StopType.GoToDefault);
 
             targetDirection = Vector3.zero;
+            transform.GetChild(0).GetChild(0).localEulerAngles = new Vector3(0, 0, 0);
         }
     }
 
