@@ -8,6 +8,9 @@ public class PlayerMovement : Movement
 {
     private Player player;
 
+    public GameObject createOnLand = null;
+    private float creationTimer = 0;
+
     void Start()
     {
         player = GetComponent<Player>();
@@ -34,9 +37,18 @@ public class PlayerMovement : Movement
         {
             foreach (Animate animate in runAnimations)
                 animate.Play();
+
+            creationTimer = runAnimations[0].defaultStopRatio / animationBaseSpeeds[0];
         }
         else if (_inputEventInfo.inputState == InputState.Active)
         {
+            creationTimer += Time.deltaTime;
+            if (creationTimer > 0.5f / animationBaseSpeeds[0])
+            {
+                Instantiate(createOnLand, transform.position, transform.rotation).transform.localScale *= 0.45f;
+                creationTimer -= 0.5f / animationBaseSpeeds[0];
+            }
+
             for (int i = 0; i < runAnimations.Length; i++)
                 runAnimations[i].speed = animationBaseSpeeds[i] * Mathf.Max(0.5f, inputMagLastFrame);
 
@@ -51,6 +63,17 @@ public class PlayerMovement : Movement
             //    targetDirection = new Vector3(_inputEventInfo.dualAxisValue.x, -_inputEventInfo.dualAxisValue.y, 0);
 
             player.sprite.flipX = targetDirection.x < 0;
+
+            if (targetDirection.x != 0)
+                player.sprite.transform.GetChild(0).localScale = new Vector3(targetDirection.x < 0 ? -1 : 1, 0.9359878f, 1);
+
+            transform.GetChild(0).GetChild(0).localEulerAngles = new Vector3(0, 0, targetDirection.x * -15);
+            //player.sprite.transform.GetChild(0).GetChild(0).LookAt(player.sprite.transform.GetChild(0).GetChild(0).TransformPoint(targetDirection));
+
+            if (targetDirection.z <= 0)
+                player.sprite.transform.GetChild(0).localEulerAngles = new Vector3(-35, 180, 0);
+            else if (targetDirection.z > 0)
+                player.sprite.transform.GetChild(0).localEulerAngles = new Vector3(35, 0, 0);
         }
         else
         {
@@ -58,6 +81,7 @@ public class PlayerMovement : Movement
                 animate.Stop(Animate.StopType.GoToDefault);
 
             targetDirection = Vector3.zero;
+            transform.GetChild(0).GetChild(0).localEulerAngles = new Vector3(0, 0, 0);
         }
     }
 
@@ -77,7 +101,7 @@ public class PlayerMovement : Movement
 
     void OnDestroy()
     {
-        //InputEvents.Movement.Unsubscribe(OnMove, 0);
+        InputEvents.Movement.Unsubscribe(OnMove, 0);
         //InputEvents.Jump.Unsubscribe(OnJump, 0);
     }
 }

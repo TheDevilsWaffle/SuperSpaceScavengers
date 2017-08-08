@@ -3,20 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Canvas))]
 public class ResourceMeter : MonoBehaviour
 {
+    [HideInInspector]
+    public Canvas canvas;
+
     public Image delayedFill = null;
     public Image mainFill = null;
 
-    // Use this for initialization
-    void Start()
+    void OnValidate()
     {
-
+        if (canvas == null)
+            canvas = GetComponent<Canvas>();
     }
 
-    // Update is called once per frame
-    void Update()
+    // Use this for initialization
+    void OnEnable()
     {
-
+        canvas.enabled = true;
+    }
+    void OnDisable()
+    {
+        canvas.enabled = false;
     }
 }

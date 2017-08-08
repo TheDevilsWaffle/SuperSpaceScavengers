@@ -35,10 +35,13 @@ public class Projectile : MonoBehaviour
             rigidbody = GetComponent<Rigidbody>();
     }
 
-    public Projectile FireNew(GameObject _createdBy, Vector3 _position, Quaternion _rotation, float _projectileSpeed, float _shotDistance, float _size, int _damage,
+    public Projectile FireNew(GameObject _createdBy, Vector3 _position, Quaternion _rotation, float _projectileSpeed, float _shotDistance, float _size, int _damage, Material _materialOverride,
         float _horizontalSpread = 0, float _verticalSpread = 0, Vector3 _inheritedVelocity = default(Vector3), float _seekingStrength = 0, Transform _target = null) //optional parameters
     {
         GameObject _newProjectileObject = Instantiate(gameObject, _position, _rotation);
+
+        if (_materialOverride != null)
+            _newProjectileObject.GetComponent<MeshRenderer>().material = _materialOverride;
 
         float _randomAngle = Mathf.Deg2Rad * Random.Range(-_horizontalSpread, _horizontalSpread);
         Vector3 _direction = Vector3.RotateTowards(_rotation * Vector3.forward, Mathf.Sign(_randomAngle) * (_rotation * Vector3.right), Mathf.Abs(_randomAngle), 0);
@@ -99,7 +102,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider _collider)
     {
-        if (_collider.GetComponent<Projectile>() != null || _collider.gameObject == createdBy)
+        if (_collider.GetComponent<Projectile>() != null || _collider.gameObject == createdBy || _collider.isTrigger)
             return;
 
         HealthAndShields _healthAndShields = _collider.GetComponent<HealthAndShields>();
@@ -114,7 +117,7 @@ public class Projectile : MonoBehaviour
     {
         if (createOnDestroy != null)
         {
-            GameObject _createdObject = Instantiate(createOnDestroy, transform.position - rigidbody.velocity * Time.fixedDeltaTime, transform.rotation);
+            GameObject _createdObject = Instantiate(createOnDestroy, transform.position - rigidbody.velocity * Time.fixedDeltaTime * 1f, transform.rotation);
             _createdObject.transform.localScale = transform.localScale * createOnDestroySizeRatio;
         }
 

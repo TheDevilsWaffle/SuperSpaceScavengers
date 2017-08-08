@@ -15,25 +15,29 @@ public class HealthAndShields : MonoBehaviour
     public bool dontDisplayAtFull = true;
     public float healthDelay = 0.3f;
     public float delayedLerpSpeed = 2f;
-    public ResourceMeter healthBarPrefab = null;
-    public Vector3 offset = new Vector3(0, 0, 3);
-    private ResourceMeter healthBar = null;
+    //public ResourceMeter healthBarPrefab = null;
+    //public Vector3 offset = new Vector3(0, 0, 3);
+    public ResourceMeter healthBar = null;
+
+    public int fixedFrameDelay = 1;
+
+    public GameObject[] createOnKilled;
 
     public delegate void HealthDelegate(int _health);
     private HealthDelegate healthChangeDelegate = delegate { };
 
     public void Start()
     {
-        if (healthBarPrefab == null || displayHealthBar == false)
-        {
-            DealDamage(0);
-            return;
-        }
+        //if (healthBarPrefab == null || displayHealthBar == false)
+        //{
+        //    DealDamage(0);
+        //    return;
+        //}
 
-        GameObject _healthBarObject = null;
-        _healthBarObject = Instantiate(healthBarPrefab.gameObject, transform.position, transform.rotation);
+        //GameObject _healthBarObject = null;
+        //_healthBarObject = Instantiate(healthBarPrefab.gameObject, transform.position, transform.rotation);
 
-        healthBar = _healthBarObject.GetComponent<ResourceMeter>();
+        //healthBar = _healthBarObject.GetComponent<ResourceMeter>();
 
         DealDamage(0);
     }
@@ -54,7 +58,7 @@ public class HealthAndShields : MonoBehaviour
             else
                 healthBar.enabled = true;
         }
-        
+
         healthChangeDelegate(health);
 
         if (health <= 0)
@@ -86,7 +90,21 @@ public class HealthAndShields : MonoBehaviour
 
     void Kill()
     {
+        StartCoroutine(DelayedKill());
+    }
+
+    private IEnumerator DelayedKill()
+    {
+        while (fixedFrameDelay > 0)
+        {
+            fixedFrameDelay--;
+            yield return new WaitForFixedUpdate();
+        }
+
         Destroy(gameObject);
+
+        foreach (GameObject _gameObject in createOnKilled)
+            Instantiate(_gameObject, transform.position, transform.rotation);
     }
 
     // Update is called once per frame

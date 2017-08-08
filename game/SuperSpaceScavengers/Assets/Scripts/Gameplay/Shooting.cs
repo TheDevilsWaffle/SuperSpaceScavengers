@@ -11,7 +11,6 @@ public class Shooting : MonoBehaviour
     public Vector3 projectileOffset = Vector3.forward;
 
     public float shotsPerSecond = 1;
-    //[ReadOnly]
     public float timeBetweenShots;
 
     public int projectileDamage = 10;
@@ -30,24 +29,25 @@ public class Shooting : MonoBehaviour
     public float seekingStrength;
 
     public Projectile projectile;
+    public Material projectileMaterialOverride;
 
-    protected float timeSinceShot = 0;
-    protected bool firing = false;
+    public int projectilesPerBurst = 1;
+    public float timeBetweenBursts = 0.01f;
+
+    public float timeSinceShot = 0;
+    private bool firing = false;
 
     protected Vector3 aimDirection;
 
-    void OnValidate()
+    private void OnValidate()
     {
         timeBetweenShots = 1 / shotsPerSecond;
+
+        if (rigidbody == null)
+            rigidbody = GetComponent<Rigidbody>();
     }
 
-    // Use this for initialization
-    protected void Start()
-    {
-        rigidbody = GetComponent<Rigidbody>();
-    }
-
-    protected void Fire()
+    public void Fire()
     {
         if (timeSinceShot < timeBetweenShots)
             return;
@@ -58,18 +58,19 @@ public class Shooting : MonoBehaviour
 
     private IEnumerator ShootProjectiles()
     {
-        Vector3 _spawnPosition = transform.GetChild(0).position + transform.right * projectileOffset.x + transform.up * projectileOffset.y + transform.forward * projectileOffset.z;
         Vector3 _inheritedVelocity = Vector3.zero;
-
-        if (rigidbody != null)
-            _inheritedVelocity = rigidbody.velocity * velocityInheritanceRatio;
 
         for (int i = 0; i < projectileCount; i++)
         {
-            projectile.FireNew(gameObject, _spawnPosition, transform.rotation, projectileSpeed, shotDistance, projectileSize, projectileDamage, horizontalSpread, verticalSpread, _inheritedVelocity, seekingStrength);
+            Vector3 _spawnPosition = transform.GetChild(0).position + transform.right * projectileOffset.x + transform.up * projectileOffset.y + transform.forward * projectileOffset.z;
+            if (rigidbody != null)
+                _inheritedVelocity = rigidbody.velocity * velocityInheritanceRatio;
 
-            if (i % 3 == 0)
-                yield return null;
+            projectile.FireNew(gameObject, _spawnPosition, transform.rotation, projectileSpeed, shotDistance, projectileSize,
+                projectileDamage, projectileMaterialOverride, horizontalSpread, verticalSpread, _inheritedVelocity, seekingStrength);
+
+            if (i % projectilesPerBurst == 0)
+                yield return new WaitForSeconds(timeBetweenBursts);
         }
     }
 

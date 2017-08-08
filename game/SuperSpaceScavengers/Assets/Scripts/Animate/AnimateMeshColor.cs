@@ -11,6 +11,8 @@ public class AnimateMeshColor : AnimateColor
     protected override void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.material.color = meshRenderer.material.color; //forcing new material instance
+
         base.Start();
     }
     protected override void SetStartValue()

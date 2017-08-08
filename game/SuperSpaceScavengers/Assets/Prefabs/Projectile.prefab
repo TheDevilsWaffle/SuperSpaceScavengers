@@ -113,7 +113,7 @@ MonoBehaviour:
   rigidbody: {fileID: 54630773738954456}
   target: {fileID: 0}
   createOnDestroy: {fileID: 0}
-  createOnDestroySizeRatio: 0.5
+  createOnDestroySizeRatio: 1.33
 --- !u!135 &135911604973395864
 SphereCollider:
   m_ObjectHideFlags: 1

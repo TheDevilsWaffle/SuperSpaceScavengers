@@ -6,11 +6,12 @@ using UnityEngine;
 public class PlayerShooting : Shooting
 {
     private Player player;
+    private Shooting shooting;
 
     // Use this for initialization
-    private new void Start()
+    private void Start()
     {
-        base.Start();
+        shooting = GetComponentInChildren<Shooting>();
 
         InputEvents.UseItem.Subscribe(OnShoot);
         //InputEvents.LeftBasic.Subscribe(OnAim);
@@ -31,16 +32,15 @@ public class PlayerShooting : Shooting
     {
         if (_inputEventInfo.inputState == InputState.Triggered)
         {
-            firing = true;
+            //shooting.firing = true;
         }
         if (_inputEventInfo.inputState == InputState.Active)
         {
-            if (timeSinceShot > timeBetweenShots)
-                Fire();
+            shooting.Fire();
         }
         else if (_inputEventInfo.inputState == InputState.Released)
         {
-            firing = false;
+            //shooting.firing = false;
         }
     }
 
