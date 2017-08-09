@@ -19,8 +19,8 @@ TagManager:
   - ItemDetection
   - Projectile
   - ItemChild
-  - 
-  - 
+  - DoorDetection
+  - Door
   - 
   - 
   - 
