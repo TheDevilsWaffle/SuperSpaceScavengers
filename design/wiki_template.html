@@ -1,0 +1,101 @@
+
+----------------------------------------------------------------------
+<h1>HOME</h1>
+
+<h3>SUPER SPACE SCAVENGERS</h3>
+<hr>
+<p>
+<ul>
+<li><a href="https://github.com/TheDevilsWaffle/SuperSpaceScavengers/wiki/Environment">Environment</a></li>
+<li><a href="https://github.com/TheDevilsWaffle/SuperSpaceScavengers/wiki/ITEMS">Items</a></li>
+<li><a href="https://github.com/TheDevilsWaffle/SuperSpaceScavengers/wiki/Game-Loop">Gameplay</a></li>
+<li><a href="https://github.com/TheDevilsWaffle/SuperSpaceScavengers/wiki/Health-&-Energy">Health &amp; Energy</a></li>
+</ul>
+</p>
+----------------------------------------------------------------------
+<h3>Game Loop</h3>
+<hr>
+<p><em>Super Space Scavengers</em> has 3 distinct phases of gameplay: Mission Select, Scavenging Mission, Loot Offload.</p>
+<h4>Mission Select</h4>
+<hr>
+<p>The Mission Select phase of gameplay revolves around a centralized spaceport that you visit before and after a scavenging mission. The purpose of this gameplay phase is to provide the player with strategic options for where and what they would like to try and scavenge. During this phase the player will be provided with several (1 – 3) areas to try and scavenge from which dictate the size of the ship, faction that the ship belongs to, and overall difficulty for trying to scavenge from ships in these areas. In order to access new areas, the player will have to upgrade their ship with better parts to reach further away areas. This effectively works to gate players from areas that are too difficult and aids in player progression. A player may choose to revisit areas already looted, but ships in that area will provide less valuable items/be more unstable (hazardous) and have a higher chance of being contested by competing factions (enemies).</p>
+<p>In addition to information about the ships available to scavenge, the player will also receive information about what types loot (rare minerals, ship parts, power sources, weapons, etc.) are in high demand. Before every mission, depending on what type of loot the player frequently turns in, the value of loot will change to encourage the player to either visit different areas or scavenge for different types of loot (a lot like a stock market that the player affects by flooding the market with new/extra resources).</p>
+<p>Before embarking on a Scavenging Mission, the player will have the option to spend money on items, lives, and ship upgrades. Items are usable during a scavenging mission in the form or passive upgrades or weapons and tools. The player may choose to spend a lot of money on extra lives before a mission begins. While lives are expensive, it is important to note that if a player runs out of lives then their game will end. Spending money on ship upgrades allow the player to reach further areas that might be less contested by other scavenging factions, larger ships, or new types of missions.</p>
+<h4>Scavenging Mission</h4>
+<hr>
+<p>Scavenging Missions are the core gameplay of the game. A scavenging mission begins by choosing to embark from the Mission Select phase. A brief animation of the player traveling through space and pulling up to dock with the abandoned ship will play before the scavenging mission begins. Once docked with the ship the player will be tasked with exploring the ship for loot to bring back to their docked ship before finally choosing to leave. If a player dies while on a scavenging mission and opted to purchase lives then they are cloned (respawn) back aboard their ship and can choose to go back in and get their dropped loot, or leave the mission. If a player dies with no more lives left, then their game is over and their finally score is presented.</p>
+<h4>Loot Offload</h4>
+<hr>
+<p>The Loot Offload phase of gameplay is meant to be a rewarding phase of gameplay that talies up the success (or failure) of the scavenging mission. All loot is itemized and calculated based on that mission's stock market values. This is a moment to make a big deal out of the player's success and should be a visually interesting moment that feels great. After the loot offload is calcuated and added to the player's total, they are presented with the Mission Select gameplay phase to begin playing the game again.</p>
+
+----------------------------------------------------------------------
+<h1>ENVIRONMENT</h1>
+<h3>SUMMARY</h3>
+<hr />
+<p>The environment in <em>Super Space Scavengers</em> consists of abandoned space ships found in various states of destruction. As such, the environment is hazardous and various in theme based on the race/faction that the space ship once belonged to. The environment will be based upon a grid of tiles that are destructible. Layouts are carefully generated to include rooms that make sense for a space ship, but their locations on the ship are random, along with the hallways and the current stability of the ship.</p>
+
+<h3>FEATURES</h3>
+<hr>
+<p>Nearly all environmental features are destructible with health and states such as UNDAMAGED, DAMAGED, and BROKEN. The following tile types/art assets make up an environment:</p>
+<p>
+	<ul>
+		<li>basic floor</li>
+		<li>armored floor</li>
+		<li>basic wall</li>
+		<li>armored wall</li>
+		<li>reinforced armor wall</li>
+		<li>basic window</li>
+		<li>armored window</li>
+		<li>power cables (can be floor/wall based)</li>
+		<li>empty space/vacuum</li>
+		<li>broken/ruptured floor</li>
+		<li>broken/ruptured wall</li>
+		<li>railing</li>
+		<li>more to come…</li>
+	</ul>
+</p>
+
+<h3>SPACE</h3>
+<hr>
+<p>The affects of space will be present in the game world and will work as a minor to powerful pull on the player if they approach a tile that is exposed to open space. For example in a space of 5x5 tiles with the center tile being broken/exposed to space, there will be a force effect that will act upon the player to pull/suck them to that hole. The surrounding tiles will experience a slow damage per second until they evetually give way and break, as well.</p>
+<p>
+<pre>
+KEY:
+-----
+[ ] = tile
+[@] = broken tile/space
+[x] tile that will pull toward the broken/tile space and is also slowly losing health.
+-----
+[ ][ ][ ][ ][ ]
+[ ][x][x][x][ ]
+[ ][x][@][x][ ]
+[ ][x][x][x][ ]
+[ ][ ][ ][ ][ ]
+</pre>
+</p>
+
+<h3>GRAVITY</h3>
+<hr>
+<p>In situations where the player encounters areas without gravity, the tiles act like ice in that the player's momentum will carry them in one direction until they either hit a wall or reach an area with gravity where they can regain control over their movement.</p>
+----------------------------------------------------------------------
+
+<h3>ITEMS</h3>
+<hr>
+<p>The player can store items in one of their two inventory slots or carry an item in order to use it actively.</p>
+<h4>INVENTORY ITEMS</h4>
+<p>Players have two inventory slots that can be used to store items. Items stored in an inventory slot cannot be actively used, but any <em>passive</em> benefits for having the item will exist. An item with an <em>active</em> ability, such as a gun that can be fired, can not be used while stored in the player's inventory. If there is an empty slot in the player's inventory, the <em>active</em> item that the player is carrying can be stored into one of the empty slots.</p>
+<h4>ACTIVE ITEM</h4>
+<p>The item that a player is currently carrying is considered their <em>active</em> item. While an item is being carried, any active ability of the item, such as shooting a weapon, can be done. A player can only carry one item at a time, but may store any item being carried if there are empty slots in their inventory.</p>
+----------------------------------------------------------------------
+<h3>Health &amp; Energy</h3>
+<hr>
+<p>Health in <em>Super Space Scavengers</em> is meant to be simple yet forgiving. The player has 1 hit point and 1 shield (which can be upgraded by the use of passive items).</p>
+<h4>Hit Point</h4>
+<hr>
+<p>Space is a dangerous place and as such, the player needs to be careful because they have only 1 hit point that separates them from life and death. Health is not recoverable and if the player takes damage when their shield is not up then they will die.</p>
+<h4>Shield</h4>
+<hr>
+<p>Thankfully, while the player's 1 hit point is non-recoverable, their 1 shield is able to absorb damage, protecting the player from getting instantly killed. The shield can absorb one damage instance of any strength, but upon doing so it will leave the player vulnerable to being killed. The shield can be recharged by consuming all energy from the player's energy pool (no matter how much energy is left in the pool). The player must stand still and hold the power button for a small amount of time before the shield comes back online.</p>
+<h4>Energy</h4>
+<hr>
+<p>The player starts the game with a small energy pool of 3 energy. Energy is used to fire weapons, use tools, and restore the player's shield. Energy will restore slowly over time or can be instantly restored by consuming energy from batteries, power crystals, or power terminals.</p>
