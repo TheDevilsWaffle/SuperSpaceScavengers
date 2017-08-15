@@ -1,4 +1,4 @@
-﻿﻿///////////////////////////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////
 //AUTHOR — Travis Moore
 //SCRIPT — Tile.cs
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,6 +27,13 @@ public enum TileType
     WALL,
     EMPTY
 };
+public enum DamageState
+{
+    ARMORED,
+    STANDARD,
+    DAMAGED,
+    DESTROYED
+}
 #endregion
 
 #region EVENTS
@@ -39,13 +46,15 @@ public enum TileType
 public class Tile : MonoBehaviour
 {
     #region FIELDS
+    //refs
     Transform tr;
-    GameObject quad;
-    MeshCollider quad_mc;
+    GameObject floor;
+    MeshFilter floor_mf;
     GameObject wall;
     BoxCollider wall_bc;
     MeshRenderer wall_mr;
-
+    
+    //sfs
     [SerializeField]
     TileType type;
     public TileType Type
@@ -53,7 +62,17 @@ public class Tile : MonoBehaviour
         private set { type = value; }
         get { return type; }
     }
+    [SerializeField]
+    DamageState state;
+    public DamageState State
+    {
+        private set { state = value; }
+        get { return state; }
+    }
+    [SerializeField]
+    List<Mesh> states;
 
+    //non-sfs
     Vector2 position;
     public Vector2 Position
     {
@@ -77,14 +96,14 @@ public class Tile : MonoBehaviour
     {
         //refs
         tr = GetComponent<Transform>();
-        quad = tr.GetChild(0).gameObject;
-        quad_mc = quad.GetComponent<MeshCollider>();
+        floor = tr.GetChild(0).gameObject;
+        floor_mf = floor.GetComponent<MeshFilter>();
         wall = tr.GetChild(1).gameObject;
         wall_bc = wall.GetComponent<BoxCollider>();
         wall_mr = wall.GetComponent<MeshRenderer>();
 
         SetTileType(type);
-
+        SetDamageState(state);
         //initial values
 
     }
@@ -96,8 +115,8 @@ public class Tile : MonoBehaviour
     void Awake()
     {
         tr = GetComponent<Transform>();
-        quad = tr.GetChild(0).gameObject;
-        quad_mc = quad.GetComponent<MeshCollider>();
+        floor = tr.GetChild(0).gameObject;
+        floor_mf = floor.GetComponent<MeshFilter>();
         wall = tr.GetChild(1).gameObject;
         wall_bc = wall.GetComponent<BoxCollider>();
         wall_mr = wall.GetComponent<MeshRenderer>();
@@ -142,6 +161,32 @@ public class Tile : MonoBehaviour
         SetTileType(_type);
         SetPosition(_position);
         SetName(_name);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// updates the mesh based on what kind of tile/wall/etc. this is
+    /// </summary>
+    /// <param name="_state">DamageState enum</param>
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    public void SetDamageState(DamageState _state)
+    {
+        switch (_state)
+        {
+            case DamageState.ARMORED:
+                floor_mf.mesh = states[0];
+                break;
+            case DamageState.STANDARD:
+                floor_mf.mesh = states[1];
+                break;
+            case DamageState.DAMAGED:
+                floor_mf.mesh = states[2];
+                break;
+            case DamageState.DESTROYED:
+                floor_mf.mesh = states[3];
+                break;
+            default:
+                break;
+        }
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
@@ -329,15 +374,15 @@ public class Tile : MonoBehaviour
         switch (_tileType)
         {
             case TileType.TILE:
-                quad.SetActive(true);
+                floor.SetActive(true);
                 wall.SetActive(false);
                 break;
             case TileType.WALL:
-                quad.SetActive(true);
+                floor.SetActive(true);
                 wall.SetActive(true);
                 break;
             case TileType.EMPTY:
-                quad.SetActive(false);
+                floor.SetActive(false);
                 wall.SetActive(false);
                 break;
             default:
