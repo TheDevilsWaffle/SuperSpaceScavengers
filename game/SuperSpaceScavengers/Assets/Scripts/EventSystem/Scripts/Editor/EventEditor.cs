@@ -290,7 +290,7 @@ public class EventEditor : EditorWindow
     private void CheckDeleteEvent()
     {
         UnityEngine.Event _e = UnityEngine.Event.current;
-        if (_e != null && _e.type == EventType.keyDown && _e.keyCode == KeyCode.Delete)
+        if (_e != null && _e.type == EventType.KeyDown && _e.keyCode == KeyCode.Delete)
         {
             string _title = "Delete selected event?";
             string _body = "Are you sure you want to delete this event? This cannot be undone.";
